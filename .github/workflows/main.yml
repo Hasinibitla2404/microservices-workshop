@@ -33,12 +33,21 @@ jobs:
         npm install
         npm run build --if-present
         npm test
-    - name: Login to Docker Hub
-      run: docker login docker.io --username "${{ secrets.Docker_Username }}" --password "${{ secrets.Docker_Password }}"
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: mumbai ap-south-1
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+    - name: Build, tag, and push image to Amazon ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: nodejs
+        IMAGE_TAG: ${{ github.sha }}
     - name: Build the Docker Image 
-      run: docker build . --file Dockerfile --tag  hasinireddy24/samplenodejs
-    # Run super linter
-    - name: Super-Linter
-      uses: github/super-linter@v3.14.0
+      run: docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .  
     - name: Push the Docker Image 
-      run: docker push hasinireddy24/samplenodejs:latest
+      run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
