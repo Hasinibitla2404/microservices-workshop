@@ -47,7 +47,6 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: nodejs
         IMAGE_TAG: ${{ github.sha }}
-    - name: Build the Docker Image 
-      run: docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .  
-    - name: Push the Docker Image 
-      run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
