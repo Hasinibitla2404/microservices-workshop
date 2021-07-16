@@ -59,4 +59,3 @@ jobs:
         cluster_name: Cluster01
     - name: get-pods
       run: kubectl apply -f pod.yml
-      #donw
