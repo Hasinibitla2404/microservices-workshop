@@ -14,7 +14,8 @@ env:
   CI: true
 
 jobs:
-  build:
+  job1:
+    name: build
 
     runs-on: ubuntu-latest
 
@@ -30,8 +31,18 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm install
     - run: npm run build --if-present
-    - run: node test.js
-    
+  job2:
+    name: Test
+    needs: job1
+    runs-on: ubuntu-latest
+    steps:
+    - name: Test 
+    - run: npm run test
+  job3:
+    name: job 3
+    needs: job2
+    runs-on: ubuntu-latest
+    steps:
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
