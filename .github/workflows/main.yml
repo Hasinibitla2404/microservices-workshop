@@ -60,14 +60,14 @@ jobs:
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-    - name: Update deployment
-      uses: ianbelcher/eks-kubectl-action@master
-      with:
-        aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws_region: ap-south-1
-        cluster_name: Cluster01 
-    - name: get-pods
-      run: |
-        aws eks --region ap-south-1 update-kubeconfig --name Cluster01
-        kubectl apply -f pod.yml
+    #- name: Update deployment
+      #uses: ianbelcher/eks-kubectl-action@master
+      #with:
+        #aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        #aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        #aws_region: ap-south-1
+        #cluster_name: Cluster01 
+    #- name: get-pods
+      #run: |
+        #aws eks --region ap-south-1 update-kubeconfig --name Cluster01
+        #kubectl apply -f pod.yml
