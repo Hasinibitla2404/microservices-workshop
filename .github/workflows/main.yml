@@ -14,8 +14,7 @@ env:
   CI: true
 
 jobs:
-  job1:
-    name: build
+  build:
 
     runs-on: ubuntu-latest
 
@@ -31,18 +30,16 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm install
     - run: npm run build --if-present
-  job2:
-    name: Test
-    needs: job1
-    runs-on: ubuntu-latest
-    steps:
-    - name: Test 
+    - uses: actions/checkout@v2
+      # this is the new step using the ms-teams-notification action
+    - name: Notify dedicated teams channel
+      uses: jdcargile/ms-teams-notification@v1.3
+      with:
+        github-token: ${{ github.token }} # this will use the runner's token.
+        ms-teams-webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
+    - name: Run test cases
     - run: npm run test
-  job3:
-    name: job 3
-    needs: job2
-    runs-on: ubuntu-latest
-    steps:
+    
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -60,14 +57,3 @@ jobs:
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-    #- name: Update deployment
-      #uses: ianbelcher/eks-kubectl-action@master
-      #with:
-        #aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        #aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        #aws_region: ap-south-1
-        #cluster_name: Cluster01 
-    #- name: get-pods
-      #run: |
-        #aws eks --region ap-south-1 update-kubeconfig --name Cluster01
-        #kubectl apply -f pod.yml
